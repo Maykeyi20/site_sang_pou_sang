@@ -1,0 +1,670 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    background: #ffffff;
+    color: #141414;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   EN-TÊTE JAUNE
+========================= */
+
+.entete-principale {
+    background: #d82020;
+}
+
+.entete-contenu {
+    width: 90%;
+    max-width: 1400px;
+    margin: auto;
+    padding: 14px 0 8px;
+}
+
+.entete-contenu h1 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.navigation-principale {
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.navigation-contenu {
+    width: 90%;
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.navigation-principale a {
+    color: #111;
+    font-size: 17px;
+    padding: 13px 11px;
+    text-decoration: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.navigation-principale a:first-child {
+    border-bottom: 5px solid #111;
+}
+
+.navigation-principale a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* =========================
+   BARRE NOIRE
+========================= */
+
+.sous-navigation {
+    background: #050505;
+}
+
+.sous-navigation a {
+    color: white;
+    padding: 12px 10px;
+    font-size: 15px;
+    text-decoration: none;
+    border-right: 1px solid #777;
+}
+
+.sous-navigation a:first-child {
+    border-bottom: 4px solid #ff3030;
+}
+
+.sous-navigation a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.page {
+    width: 90%;
+    max-width: 1400px;
+    margin: 35px auto 70px;
+}
+
+.actualites {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* =========================
+   GRAND ARTICLE PRINCIPAL
+========================= */
+
+.article-principal{
+    background:#111;
+    color:white;
+    padding-bottom:20px;
+}
+
+.media-principal {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #dedede;
+    overflow: hidden;
+}
+
+.media-contenu {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: none;
+}
+
+.texte-principal{
+    background:#111;
+    padding:25px;
+}
+
+.indicateur-direct{
+    color:#BB1919;
+    font-weight:bold;
+}
+
+.article-principal h2{
+    color:#BB1919;
+    font-size:48px;
+}
+
+.article-principal h2:hover {
+    text-decoration: underline;
+}
+
+.description-principale{
+    color:#dddddd;
+}
+
+/* =========================
+   ARTICLES SECONDAIRES
+========================= */
+
+.grille-secondaire {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 35px 18px;
+}
+
+.article-secondaire{
+    background:#111;
+    color:white;
+    padding:15px;
+}
+
+.media-secondaire{
+    background:#111;
+}
+
+.texte-secondaire {
+    padding-top: 10px;
+}
+
+.article-secondaire h3{
+    color:#BB1919;
+}
+
+.article-secondaire h3:hover {
+    text-decoration: underline;
+}
+
+.description-secondaire{
+    color:#dddddd;
+}
+
+/* =========================
+   AUTEUR ET DATE
+========================= */
+
+.informations-article {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.informations-article span + span::before {
+    content: "•";
+    margin-right: 8px;
+    color: #777;
+}
+
+/* =========================
+   LIENS
+========================= */
+
+.bouton-lire {
+    display: inline-block;
+    background: #111;
+    color: white;
+    padding: 11px 18px;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.bouton-lire:hover {
+    background: #333;
+}
+
+.lien-article {
+    display: inline-block;
+    color: #176b17;
+    font-weight: bold;
+    margin-top: 12px;
+    text-decoration: none;
+}
+
+.lien-article:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   AUDIO ET CONTENU VIDE
+========================= */
+
+.zone-audio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e4e4e4;
+    padding: 20px;
+}
+
+.zone-audio audio {
+    width: 100%;
+    height: auto;
+}
+
+.media-vide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #272727;
+    color: #d71313;
+    font-size: 38px;
+    font-weight: bold;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.aucun-article,
+.erreur {
+    grid-column: 1 / -1;
+    padding: 30px;
+    background: #eeeeee;
+    font-size: 18px;
+}
+
+.erreur {
+    border-left: 6px solid #b80000;
+}
+
+/* =========================
+   TABLETTE
+========================= */
+
+@media screen and (max-width: 1000px) {
+    .actualites {
+        grid-template-columns: 1fr;
+    }
+
+    .grille-secondaire {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================
+   TÉLÉPHONE
+========================= */
+
+@media screen and (max-width: 650px) {
+    .entete-contenu,
+    .navigation-contenu,
+    .page {
+        width: 94%;
+    }
+
+    .entete-contenu h1 {
+        font-size: 34px;
+    }
+
+    .navigation-principale a,
+    .sous-navigation a {
+        font-size: 14px;
+        padding: 10px 7px;
+    }
+
+    .grille-secondaire {
+        grid-template-columns: 1fr;
+    }
+
+    .article-principal h2 {
+        font-size: 30px;
+    }
+
+    .article-secondaire h3 {
+        font-size: 22px;
+    }
+}
+
+.article-principal,
+.article-secondaire {
+    cursor: pointer;
+}
+
+.article-principal:hover h2,
+.article-secondaire:hover h3 {
+    text-decoration: underline;
+}
+/*=========================================
+page image
+===========================================*/
+
+.page-article {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto 80px;
+}
+
+.bouton-retour {
+    display: inline-block;
+    color: #c71920;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 30px;
+}
+
+.bouton-retour:hover {
+    text-decoration: underline;
+}
+
+.article-page-complete {
+    background: #101010;
+    color: white;
+    padding: 35px;
+}
+
+.categorie-article {
+    color: #d71920;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.titre-article-complet {
+    color: #d71920;
+    font-size: 52px;
+    line-height: 1.1;
+    margin-bottom: 18px;
+}
+
+.description-article-complet {
+    color: #eeeeee;
+    font-size: 21px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    white-space: pre-line;
+}
+
+.informations-article-complet {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: #999;
+    margin-bottom: 30px;
+}
+
+.informations-article-complet span + span::before {
+    content: "•";
+    margin-right: 10px;
+}
+
+.media-article-complet {
+    display: grid;
+    gap: 25px;
+}
+
+.image-article,
+.video-article,
+.youtube-article {
+    display: block;
+    width: 100%;
+    border: none;
+}
+
+.image-article {
+    max-height: 650px;
+    object-fit: cover;
+}
+
+.video-article {
+    max-height: 650px;
+}
+
+.youtube-article {
+    aspect-ratio: 16 / 9;
+}
+
+.audio-article {
+    width: 100%;
+}
+
+.lien-externe-article {
+    display: inline-block;
+    width: fit-content;
+    background: #d71920;
+    color: white;
+    padding: 12px 18px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.lien-externe-article:hover {
+    background: #a81218;
+}
+
+@media screen and (max-width: 650px) {
+    .article-page-complete {
+        padding: 22px;
+    }
+
+    .titre-article-complet {
+        font-size: 34px;
+    }
+
+    .description-article-complet {
+        font-size: 18px;
+    }
+}
+
+/* Empêche les images et vidéos de dépasser l’écran */
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
+/* Empêche les longs titres ou liens de sortir de la page */
+h1,
+h2,
+h3,
+p,
+a {
+    overflow-wrap: anywhere;
+}
+
+/* Amélioration pour les très petits téléphones */
+@media screen and (max-width: 400px) {
+    .page,
+    .page-article {
+        width: 96%;
+    }
+
+    .texte-principal {
+        padding: 18px;
+    }
+
+    .article-secondaire {
+        padding: 10px;
+    }
+
+    .article-principal h2 {
+        font-size: 26px;
+    }
+
+    .titre-article-complet {
+        font-size: 29px;
+    }
+
+    .article-page-complete {
+        padding: 16px;
+    }
+}
+
+/* ==========================
+   LOGIN
+========================== */
+
+.login-box{
+
+    width:400px;
+    max-width:95%;
+
+    margin:80px auto;
+
+    background:#111;
+
+    color:white;
+
+    padding:40px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+}
+
+.login-box h1{
+
+    color:#d71920;
+
+    margin-bottom:30px;
+
+}
+
+.login-box input{
+
+    width:100%;
+
+    padding:12px;
+
+    font-size:16px;
+
+}
+
+.login-box button{
+
+    width:100%;
+
+    padding:12px;
+
+    background:#d71920;
+
+    color:white;
+
+    border:none;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+.login-box button:hover{
+
+    background:#aa1118;
+
+}
+
+#message{
+
+    margin-top:20px;
+
+    color:red;
+
+}
+
+.bloc{
+
+    border:1px solid #ccc;
+
+    padding:20px;
+
+    margin:20px 0;
+
+    background:white;
+
+}
+
+.bloc textarea{
+
+    width:100%;
+
+}
+
+.bloc input[type=file]{
+
+    width:100%;
+
+}
+
+.bloc input[type=text]{
+
+    width:100%;
+
+}
+
+#contenu-blocs {
+    margin-top: 30px;
+}
+
+.paragraphe-article {
+    color: #eeeeee;
+    font-size: 20px;
+    line-height: 1.8;
+    margin: 28px 0;
+    text-align: left;
+    white-space: pre-line;
+}
+
+.image-bloc {
+    display: block;
+    width: 100%;
+    max-height: 700px;
+    object-fit: contain;
+    margin: 30px 0;
+}
+
+.video-bloc {
+    display: block;
+    width: 100%;
+    max-height: 700px;
+    margin: 30px 0;
+}
+
+.audio-bloc {
+    display: block;
+    width: 100%;
+    margin: 30px 0;
+}
+
+.youtube-bloc {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    margin: 30px 0;
+}
+
+.lien-bloc {
+    display: inline-block;
+    color: #d71920;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+@media screen and (max-width: 650px) {
+
+    .paragraphe-article {
+        font-size: 18px;
+        line-height: 1.7;
+    }
+
+    .image-bloc,
+    .video-bloc,
+    .youtube-bloc {
+        width: 100%;
+    }
+}

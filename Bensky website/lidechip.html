@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lidechip</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="entete-principale">
+    <div class="entete-contenu">
+        <h1>LIDÈCHIP</h1>
+    </div>
+</header>
+
+<main class="page">
+
+    <div id="message-erreur"></div>
+
+    <section id="liste-lidechip" class="actualites"></section>
+
+</main>
+
+<script>
+function echapperTexte(texte) {
+    const div = document.createElement("div");
+    div.textContent = texte || "";
+    return div.innerHTML;
+}
+
+function convertirYoutube(url) {
+    if (!url) {
+        return "";
+    }
+
+    try {
+        const adresse = new URL(url);
+        let videoId = "";
+
+        if (adresse.hostname.includes("youtu.be")) {
+            videoId = adresse.pathname
+                .replace("/", "")
+                .split("?")[0];
+        }
+
+        if (adresse.hostname.includes("youtube.com")) {
+            videoId = adresse.searchParams.get("v");
+
+            if (!videoId && adresse.pathname.includes("/embed/")) {
+                videoId = adresse.pathname
+                    .split("/embed/")[1]
+                    .split("?")[0];
+            }
+
+            if (!videoId && adresse.pathname.includes("/shorts/")) {
+                videoId = adresse.pathname
+                    .split("/shorts/")[1]
+                    .split("?")[0];
+            }
+        }
+
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        return url;
+    } catch (erreur) {
+        console.error("Lien YouTube invalide :", erreur);
+        return "";
+    }
+}
+
+function creerMedia(item, classeMedia = "") {
+    if (item.image_url) {
+        return `
+            <img
+                class="${classeMedia}"
+                src="http://localhost:3000/uploads/${item.image_url}"
+                alt="${echapperTexte(
+                    item.titre || "Article de lidechip"
+                )}"
+            >
+        `;
+    }
+
+    if (item.video_url) {
+        return `
+            <video class="${classeMedia}" controls>
+                <source
+                    src="http://localhost:3000/uploads/${item.video_url}"
+                >
+
+                Votre navigateur ne peut pas lire cette vidéo.
+            </video>
+        `;
+    }
+
+    if (
+        item.lien_url &&
+        (
+            item.lien_url.includes("youtube.com") ||
+            item.lien_url.includes("youtu.be")
+        )
+    ) {
+        return `
+            <iframe
+                class="${classeMedia}"
+                src="${convertirYoutube(item.lien_url)}"
+                title="${echapperTexte(
+                    item.titre || "Vidéo YouTube"
+                )}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        `;
+    }
+
+    if (item.audio_url) {
+        return `
+            <div class="zone-audio ${classeMedia}">
+                <audio controls>
+                    <source
+                        src="http://localhost:3000/uploads/${item.audio_url}"
+                    >
+
+                    Votre navigateur ne peut pas lire ce fichier audio.
+                </audio>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="media-vide ${classeMedia}">
+            LIDECHIP
+        </div>
+    `;
+}
+
+function creerDate(date) {
+    if (!date) {
+        return "";
+    }
+
+    const datePublication = new Date(date);
+
+    if (Number.isNaN(datePublication.getTime())) {
+        return "";
+    }
+
+    return datePublication.toLocaleDateString("fr-CA", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+function estLienYoutube(url) {
+    if (!url) {
+        return false;
+    }
+
+    return (
+        url.includes("youtube.com") ||
+        url.includes("youtu.be")
+    );
+}
+
+fetch("http://localhost:3000/contenus?categorie=lidechip")
+    .then(reponse => {
+        if (!reponse.ok) {
+            throw new Error(
+                "Impossible de récupérer les articles."
+            );
+        }
+
+        return reponse.json();
+    })
+    .then(data => {
+        const container =
+            document.getElementById("liste-lidechip");
+
+        if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = `
+                <p class="aucun-article">
+                    Aucun article de lidechip n’a encore été publié.
+                </p>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        /*
+            Le premier article devient le grand article.
+        */
+        const articlePrincipal = data[0];
+
+        /*
+            Tous les autres deviennent les petites cartes.
+        */
+        const autresArticles = data.slice(1);
+
+        /* =========================
+           GRAND ARTICLE
+        ========================= */
+
+        const grandArticle =
+            document.createElement("article");
+
+        grandArticle.className = "article-principal";
+
+        grandArticle.innerHTML = `
+            <div class="media-principal">
+                ${creerMedia(
+                    articlePrincipal,
+                    "media-contenu"
+                )}
+            </div>
+
+            <div class="texte-principal">
+
+                <span class="indicateur-direct">
+                    ${
+                        articlePrincipal.video_url ||
+                        estLienYoutube(articlePrincipal.lien_url)
+                            ? "● VIDÉO"
+                            : "LIDECHIP"
+                    }
+                </span>
+
+                <h2>
+                    ${echapperTexte(articlePrincipal.titre)}
+                </h2>
+
+                <div class="informations-article">
+
+                    <span>
+                        Par ${echapperTexte(
+                            articlePrincipal.author ||
+                            "Auteur inconnu"
+                        )}
+                    </span>
+
+                    <span>
+                        ${creerDate(
+                            articlePrincipal.date_publication
+                        )}
+                    </span>
+
+                </div>
+
+                ${
+                    articlePrincipal.lien_url &&
+                    !estLienYoutube(articlePrincipal.lien_url)
+                        ? `
+                            <a
+                                class="bouton-lire"
+                                href="${articlePrincipal.lien_url}"
+                                target="_blank"
+                                rel="noopener noreferrer">
+                                Lire le lien externe
+                            </a>
+                        `
+                        : ""
+                }
+
+            </div>
+        `;
+
+        grandArticle.addEventListener(
+            "click",
+            event => {
+                if (
+                    event.target.closest("a") ||
+                    event.target.closest("video") ||
+                    event.target.closest("audio") ||
+                    event.target.closest("iframe")
+                ) {
+                    return;
+                }
+
+                window.location.href =
+                    `article.html?id=${articlePrincipal.id}`;
+            }
+        );
+
+        /* =========================
+           PETITS ARTICLES
+        ========================= */
+
+        const grilleSecondaire =
+            document.createElement("div");
+
+        grilleSecondaire.className =
+            "grille-secondaire";
+
+        autresArticles.forEach(item => {
+            const article =
+                document.createElement("article");
+
+            article.className =
+                "article-secondaire";
+
+            article.innerHTML = `
+                <div class="media-secondaire">
+                    ${creerMedia(
+                        item,
+                        "media-contenu"
+                    )}
+                </div>
+
+                <div class="texte-secondaire">
+
+                    <h3>
+                        ${echapperTexte(item.titre)}
+                    </h3>
+
+                    <div class="informations-article">
+
+                        <span>
+                            ${echapperTexte(
+                                item.author || "Lidechip"
+                            )}
+                        </span>
+
+                        <span>
+                            ${creerDate(
+                                item.date_publication
+                            )}
+                        </span>
+
+                    </div>
+
+                    ${
+                        item.lien_url &&
+                        !estLienYoutube(item.lien_url)
+                            ? `
+                                <a
+                                    class="lien-article"
+                                    href="${item.lien_url}"
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    Ouvrir le lien externe
+                                </a>
+                            `
+                            : ""
+                    }
+
+                </div>
+            `;
+
+            article.addEventListener(
+                "click",
+                event => {
+                    if (
+                        event.target.closest("a") ||
+                        event.target.closest("video") ||
+                        event.target.closest("audio") ||
+                        event.target.closest("iframe")
+                    ) {
+                        return;
+                    }
+
+                    window.location.href =
+                        `article.html?id=${item.id}`;
+                }
+            );
+
+            grilleSecondaire.appendChild(article);
+        });
+
+        container.appendChild(grandArticle);
+
+        if (autresArticles.length > 0) {
+            container.appendChild(grilleSecondaire);
+        }
+    })
+    .catch(erreur => {
+        console.error(erreur);
+
+        document
+            .getElementById("message-erreur")
+            .innerHTML = `
+                <div class="erreur">
+                    Impossible de charger les articles.
+                    Vérifie que le serveur Node.js fonctionne
+                    sur le port 3000.
+                </div>
+            `;
+    });
+</script>
+
+</body>
+</html>
