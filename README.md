@@ -10,7 +10,6 @@ la musique, le cinéma, la diversité et le leadership.
 - HTML
 - CSS
 - JavaScript
-- C#
 - SQL
 
 ## 📂 Structure du projet
