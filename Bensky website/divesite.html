@@ -74,20 +74,36 @@ function convertirYoutube(url) {
     }
 }
 
-function creerMedia(item, classeMedia = "") {
+/*OLD FUNCTION; function creerMedia(item, classeMedia = "") {
     if (item.image_url) {
         return `
             <img
                 class="${classeMedia}"
                 src="http://localhost:3000/uploads/${item.image_url}"
+                
+                alt="${echapperTexte(
+                    item.titre || "Article sur la diversité"
+                )}"
+            >
+        `;
+    }*/
+
+    function creerMedia(item, classeMedia = "") {
+    if (item.image_url) {
+        return `
+            <img
+                class="${classeMedia}"
+                src="/uploads/${item.image_url}"
+                
                 alt="${echapperTexte(
                     item.titre || "Article sur la diversité"
                 )}"
             >
         `;
     }
+    
 
-    if (item.video_url) {
+    /* OLD FUNCTION = if (item.video_url) {
         return `
             <video class="${classeMedia}" controls>
                 <source
@@ -97,7 +113,22 @@ function creerMedia(item, classeMedia = "") {
                 Votre navigateur ne peut pas lire cette vidéo.
             </video>
         `;
+    }*/
+
+    
+    if (item.video_url) {
+        return `
+            <video class="${classeMedia}" controls>
+                <source
+                    src="/uploads/${item.video_url}"
+                >
+
+                Votre navigateur ne peut pas lire cette vidéo.
+            </video>
+        `;
     }
+
+
 
     if (
         item.lien_url &&
@@ -119,12 +150,26 @@ function creerMedia(item, classeMedia = "") {
         `;
     }
 
-    if (item.audio_url) {
+    /* OLD FUNCTION = if (item.audio_url) {
         return `
             <div class="zone-audio ${classeMedia}">
                 <audio controls>
                     <source
                         src="http://localhost:3000/uploads/${item.audio_url}"
+                    >
+
+                    Votre navigateur ne peut pas lire ce fichier audio.
+                </audio>
+            </div>
+        `;
+    }*/
+
+    if (item.audio_url) {
+        return `
+            <div class="zone-audio ${classeMedia}">
+                <audio controls>
+                    <source
+                        src="/uploads/${item.audio_url}"
                     >
 
                     Votre navigateur ne peut pas lire ce fichier audio.
@@ -169,7 +214,8 @@ function estLienYoutube(url) {
     );
 }
 
-fetch("http://localhost:3000/contenus?categorie=diversite")
+/*ansyen fetchfetch; ("http://localhost:3000/contenus?categorie=diversite")*/
+    fetch("/contenus?categorie=diversite")
     .then(reponse => {
         if (!reponse.ok) {
             throw new Error(

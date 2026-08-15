@@ -79,7 +79,7 @@ function creerMedia(item, classeMedia = "") {
         return `
             <img
                 class="${classeMedia}"
-                src="http://localhost:3000/uploads/${item.image_url}"
+                src="/uploads/${item.image_url}"
                 alt="${echapperTexte(
                     item.titre || "Article de lidechip"
                 )}"
@@ -91,7 +91,7 @@ function creerMedia(item, classeMedia = "") {
         return `
             <video class="${classeMedia}" controls>
                 <source
-                    src="http://localhost:3000/uploads/${item.video_url}"
+                   src="/uploads/${item.video_url}"
                 >
 
                 Votre navigateur ne peut pas lire cette vidéo.
@@ -124,7 +124,7 @@ function creerMedia(item, classeMedia = "") {
             <div class="zone-audio ${classeMedia}">
                 <audio controls>
                     <source
-                        src="http://localhost:3000/uploads/${item.audio_url}"
+                        src="/uploads/${item.audio_url}"
                     >
 
                     Votre navigateur ne peut pas lire ce fichier audio.
@@ -169,7 +169,7 @@ function estLienYoutube(url) {
     );
 }
 
-fetch("http://localhost:3000/contenus?categorie=lidechip")
+fetch("/contenus?categorie=lidechip")
     .then(reponse => {
         if (!reponse.ok) {
             throw new Error(

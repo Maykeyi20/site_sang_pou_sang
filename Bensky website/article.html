@@ -130,9 +130,9 @@ async function chargerArticle() {
         ========================= */
 
         const articleResponse =
-            await fetch(
-                `http://127.0.0.1:3000/article/${articleId}`
-            );
+    await fetch(
+        `/article/${articleId}`
+    );
 
 
         if (!articleResponse.ok) {
@@ -201,7 +201,7 @@ async function chargerArticle() {
 
         const blocsResponse =
             await fetch(
-                `http://127.0.0.1:3000/article/${articleId}/blocs`
+                `/article/${articleId}/blocs`
             );
 
 
@@ -262,7 +262,7 @@ async function chargerArticle() {
                     "image-bloc";
 
                 image.src =
-                    `http://127.0.0.1:3000/uploads/${bloc.contenu}`;
+                `/uploads/${bloc.contenu}`
 
                 image.alt =
                     article.titre;
@@ -290,7 +290,7 @@ async function chargerArticle() {
                 video.controls = true;
 
                 video.src =
-                    `http://127.0.0.1:3000/uploads/${bloc.contenu}`;
+                    `/uploads/${bloc.contenu}`
 
                 zone.appendChild(
                     video
@@ -315,7 +315,7 @@ async function chargerArticle() {
                 audio.controls = true;
 
                 audio.src =
-                    `http://127.0.0.1:3000/uploads/${bloc.contenu}`;
+                    `/uploads/${bloc.contenu}`
 
                 zone.appendChild(
                     audio

@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -30,7 +31,8 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-
+/*pour metre mon backend dans le meme port, je puex le suprimer apres*/
+app.use(express.static(path.join(__dirname, "../Bensky website")));
 
 /* =========================
    SESSION
