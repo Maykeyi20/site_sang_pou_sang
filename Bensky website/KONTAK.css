@@ -1,0 +1,92 @@
+#box-antete{
+    width: 100%;
+    margin: 0;
+    padding: 14px 0 8px;
+    background: #d82020;
+}
+
+body{
+    background-color:black;
+}
+
+h1{
+    text-align: center;
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.type-infos{
+    
+    color: #d82020;
+    font-size: 2.2rem;
+    text-align: center; /* centre le texte dans le bloc */
+    margin: 0 auto;     /* centre le bloc lui-même */
+    margin-top: 100px;
+}
+
+.founir-infos{
+    color: #f9f6f6;
+    font-size: 2.1rem;
+    text-align: center; /* centre le texte dans le bloc */
+    margin: 0 auto;     /* centre le bloc lui-même */
+    margin-top: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+footer{
+    margin-top: 370px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+    border-top: 1px solid #f90000; /* Ti liy pou separe footer la */
+    border-left: 1px solid #f90000; /* Ti liy pou separe footer la */
+    border-right: 1px solid #f90000; /* Ti liy pou separe footer la */
+}
+
+/* 📱 TELEFÒN (ti ekran) */
+@media (max-width: 600px) {
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .type-infos {
+        font-size: 1.8rem;
+        margin-top: 170px;
+    }
+
+    .founir-infos {
+        font-size: 1.6rem;
+        margin-top: 20px;
+    }
+
+    footer {
+        margin-top: 500px;
+        font-size: 0.9rem;
+    }
+}
+
+/* 📲 TABLETTE */
+@media (min-width: 601px) and (max-width: 900px) {
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .type-infos {
+        font-size: 2rem;
+        margin-top: 200px;
+    }
+
+    .founir-infos {
+        font-size: 1.8rem;
+        margin-top: 100px;
+    }
+
+    footer {
+        margin-top: 300px;
+        font-size: 1rem;
+    }
+}
