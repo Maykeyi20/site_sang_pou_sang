@@ -21,7 +21,7 @@ h1{
     font-size: 2.2rem;
     text-align: center; /* centre le texte dans le bloc */
     margin: 0 auto;     /* centre le bloc lui-même */
-    margin-top: 100px;
+    margin-top: 200px;
 }
 
 .founir-infos{
@@ -44,6 +44,36 @@ footer{
     border-left: 1px solid #f90000; /* Ti liy pou separe footer la */
     border-right: 1px solid #f90000; /* Ti liy pou separe footer la */
 }
+
+.yt-link i {
+    display: flex;
+    justify-content: center;  /* centre horizontalement */
+    margin-top: 2px;
+    font-size: 50px;
+    color: #ff0000;
+    transition: 0.3s;
+    
+    
+}
+
+.yt-link i:hover {
+    color: #b00404;
+    transform: scale(1.1);
+}
+
+a {
+    text-decoration: none; /* retire liy anba oswa anlè */
+}
+
+#swiv-nou{
+    display: flex;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #d71920;
+    margin-top: 50px;
+}
+
 
 /* 📱 TELEFÒN (ti ekran) */
 @media (max-width: 600px) {
