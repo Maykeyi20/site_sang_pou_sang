@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -8,13 +6,14 @@ const fs = require("fs");
 const path = require("path");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
+
 const app = express();
 const PORT = 3000;
 
 
-/* =========================
+/* =====================================================
    CORS
-========================= */
+===================================================== */
 
 app.use(cors({
     origin: "http://127.0.0.1:5500",
@@ -22,50 +21,52 @@ app.use(cors({
 }));
 
 
-/* =========================
+/* =====================================================
    MIDDLEWARES
-========================= */
+===================================================== */
 
 app.use(express.json());
 
-app.use(express.urlencoded({
-    extended: true
-}));
-/*pour metre mon backend dans le meme port, je puex le suprimer apres*/
-app.use(express.static(path.join(__dirname, "../Bensky website")));
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
 
-/* =========================
+
+/* =====================================================
    SESSION
-========================= */
+===================================================== */
 
-app.use(session({
-   secret: process.env.SESSION_SECRET,
+app.use(
+    session({
+        secret: "monsite-secret-2026-change-moi-plus-tard",
 
-    resave: false,
+        resave: false,
 
-    saveUninitialized: false,
+        saveUninitialized: false,
 
-    cookie: {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        cookie: {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000
+        }
+    })
+);
 
-        // 24 heures
-        maxAge: 24 * 60 * 60 * 1000
-    }
-}));
 
-
-/* =========================
-   CONNEXION MYSQL
-========================= */
+/* =====================================================
+   MYSQL
+===================================================== */
 
 const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "monsite"
 });
+
 
 db.connect(erreur => {
 
@@ -83,9 +84,9 @@ db.connect(erreur => {
 });
 
 
-/* =========================
+/* =====================================================
    CRÉER LE PREMIER ADMIN
-========================= */
+===================================================== */
 
 app.post("/create-admin", async (req, res) => {
 
@@ -114,15 +115,14 @@ app.post("/create-admin", async (req, res) => {
     }
 
 
-    const verifierUsers = `
+    const sqlVerification = `
         SELECT COUNT(*) AS total
         FROM users
     `;
 
 
     db.query(
-        verifierUsers,
-
+        sqlVerification,
         async (erreur, resultat) => {
 
             if (erreur) {
@@ -148,10 +148,7 @@ app.post("/create-admin", async (req, res) => {
             try {
 
                 const passwordHash =
-                    await bcrypt.hash(
-                        password,
-                        12
-                    );
+                    await bcrypt.hash(password, 12);
 
 
                 const sql = `
@@ -167,25 +164,21 @@ app.post("/create-admin", async (req, res) => {
 
                 db.query(
                     sql,
-
                     [
                         username,
                         passwordHash,
                         "admin"
                     ],
-
                     erreur => {
 
                         if (erreur) {
 
                             console.error(erreur);
 
-                            return res
-                                .status(500)
-                                .json({
-                                    message:
-                                        "Impossible de créer l'administrateur."
-                                });
+                            return res.status(500).json({
+                                message:
+                                    "Impossible de créer l'administrateur."
+                            });
                         }
 
 
@@ -193,6 +186,7 @@ app.post("/create-admin", async (req, res) => {
                             message:
                                 "Administrateur créé avec succès !"
                         });
+
                     }
                 );
 
@@ -200,19 +194,21 @@ app.post("/create-admin", async (req, res) => {
 
                 console.error(erreur);
 
-                return res.status(500).json({
+                res.status(500).json({
                     message:
                         "Erreur pendant la création du mot de passe."
                 });
             }
+
         }
     );
+
 });
 
 
-/* =========================
+/* =====================================================
    LOGIN
-========================= */
+===================================================== */
 
 app.post("/login", (req, res) => {
 
@@ -242,9 +238,7 @@ app.post("/login", (req, res) => {
 
     db.query(
         sql,
-
         [username],
-
         async (erreur, resultats) => {
 
             if (erreur) {
@@ -299,7 +293,7 @@ app.post("/login", (req, res) => {
                     user.role;
 
 
-                return res.json({
+                res.json({
                     message:
                         "Connexion réussie.",
                     username:
@@ -308,23 +302,26 @@ app.post("/login", (req, res) => {
                         user.role
                 });
 
+
             } catch (erreur) {
 
                 console.error(erreur);
 
-                return res.status(500).json({
+                res.status(500).json({
                     message:
                         "Erreur serveur."
                 });
             }
+
         }
     );
+
 });
 
 
-/* =========================
+/* =====================================================
    VÉRIFIER LA CONNEXION
-========================= */
+===================================================== */
 
 app.get("/me", (req, res) => {
 
@@ -342,12 +339,13 @@ app.get("/me", (req, res) => {
         username: req.session.username,
         role: req.session.role
     });
+
 });
 
 
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
 app.post("/logout", (req, res) => {
 
@@ -362,28 +360,24 @@ app.post("/logout", (req, res) => {
         }
 
 
-        res.clearCookie(
-            "connect.sid"
-        );
+        res.clearCookie("connect.sid");
 
 
         res.json({
             message:
                 "Déconnexion réussie."
         });
+
     });
+
 });
 
 
-/* =========================
+/* =====================================================
    PROTECTION ADMIN
-========================= */
+===================================================== */
 
-function adminSeulement(
-    req,
-    res,
-    next
-) {
+function adminSeulement(req, res, next) {
 
     if (!req.session.userId) {
 
@@ -407,15 +401,12 @@ function adminSeulement(
 }
 
 
-/* =========================
+/* =====================================================
    DOSSIER UPLOADS
-========================= */
+===================================================== */
 
 const uploadsPath =
-    path.join(
-        __dirname,
-        "uploads"
-    );
+    path.join(__dirname, "uploads");
 
 
 if (!fs.existsSync(uploadsPath)) {
@@ -429,9 +420,9 @@ if (!fs.existsSync(uploadsPath)) {
 }
 
 
-/* =========================
+/* =====================================================
    MULTER
-========================= */
+===================================================== */
 
 const storage =
     multer.diskStorage({
@@ -446,6 +437,7 @@ const storage =
                 null,
                 uploadsPath
             );
+
         },
 
 
@@ -457,17 +449,16 @@ const storage =
 
             const nomOriginal =
                 file.originalname
-                    .replace(
-                        /\s+/g,
-                        "-"
-                    );
+                    .replace(/\s+/g, "-");
 
 
             cb(
                 null,
                 `${Date.now()}-${nomOriginal}`
             );
+
         }
+
     });
 
 
@@ -478,16 +469,17 @@ const upload =
 
         limits: {
 
-            // 500 Mo maximum
             fileSize:
                 500 * 1024 * 1024
+
         }
+
     });
 
 
-/* =========================
-   DOSSIER UPLOADS PUBLIC
-========================= */
+/* =====================================================
+   RENDRE UPLOADS ACCESSIBLES
+===================================================== */
 
 app.use(
     "/uploads",
@@ -495,9 +487,10 @@ app.use(
 );
 
 
-/* =========================
-   PUBLIER UN CONTENU
-========================= */
+/* =====================================================
+   CRÉER UN ARTICLE
+   AVEC IMAGE D'ACCUEIL
+===================================================== */
 
 app.post(
     "/contenus",
@@ -505,18 +498,27 @@ app.post(
     adminSeulement,
 
     upload.fields([
+
+        {
+            name: "imageAccueil",
+            maxCount: 1
+        },
+
         {
             name: "image",
             maxCount: 1
         },
+
         {
             name: "video",
             maxCount: 1
         },
+
         {
             name: "audio",
             maxCount: 1
         }
+
     ]),
 
     (req, res) => {
@@ -535,10 +537,6 @@ app.post(
             const author =
                 req.body.author?.trim();
 
-            const lien =
-                req.body.lien?.trim()
-                || null;
-
 
             if (
                 !titre ||
@@ -547,41 +545,35 @@ app.post(
                 !author
             ) {
 
-                return res
-                    .status(400)
-                    .json({
-                        message:
-                            "Le titre, la description, la catégorie et l’auteur sont obligatoires."
-                    });
+                return res.status(400).json({
+                    message:
+                        "Le titre, la description, la catégorie et l’auteur sont obligatoires."
+                });
+
             }
 
 
-            const image =
-                req.files?.image?.[0]
-                    ? req.files.image[0].filename
-                    : null;
+            /* -----------------------------------------
+               IMAGE D'ACCUEIL
+            ----------------------------------------- */
 
-
-            const video =
-                req.files?.video?.[0]
-                    ? req.files.video[0].filename
-                    : null;
-
-
-            const audio =
-                req.files?.audio?.[0]
-                    ? req.files.audio[0].filename
+            const imageAccueil =
+                req.files?.imageAccueil?.[0]
+                    ? req.files.imageAccueil[0].filename
                     : null;
 
 
             /*
-            Ancienne colonne type.
-            On utilise article par défaut.
+               Ancienne colonne type
             */
 
             const type =
                 "article";
 
+
+            /* -----------------------------------------
+               INSERTION ARTICLE
+            ----------------------------------------- */
 
             const sql = `
                 INSERT INTO contenus
@@ -601,23 +593,31 @@ app.post(
 
 
             const valeurs = [
+
                 titre,
+
                 description,
+
                 type,
+
                 categorie,
+
                 author,
-                image,
-                video,
-                audio,
-                lien
+
+                imageAccueil,
+
+                null,
+
+                null,
+
+                null
+
             ];
 
 
             db.query(
                 sql,
-
                 valeurs,
-
                 (
                     erreur,
                     resultat
@@ -630,25 +630,26 @@ app.post(
                             erreur
                         );
 
-
-                        return res
-                            .status(500)
-                            .json({
-                                message:
-                                    "Erreur pendant la publication du contenu."
-                            });
+                        return res.status(500).json({
+                            message:
+                                "Erreur pendant la publication du contenu."
+                        });
                     }
 
 
                     res.status(201).json({
+
                         message:
                             "Contenu publié avec succès !",
 
                         id:
                             resultat.insertId
+
                     });
+
                 }
             );
+
 
         } catch (erreur) {
 
@@ -658,14 +659,16 @@ app.post(
                 message:
                     "Erreur interne du serveur."
             });
+
         }
+
     }
 );
 
 
-/* =========================
-   AJOUTER UN BLOC D'ARTICLE
-========================= */
+/* =====================================================
+   AJOUTER UN BLOC À UN ARTICLE
+===================================================== */
 
 app.post(
     "/article-blocs",
@@ -676,161 +679,159 @@ app.post(
 
     (req, res) => {
 
-        const articleId =
-            Number(
-                req.body.article_id
-            );
+        try {
 
-        const typeBloc =
-            req.body.type_bloc;
+            const articleId =
+                Number(req.body.article_id);
 
-        const ordre =
-            Number(
-                req.body.ordre
-            );
+            const typeBloc =
+                req.body.type_bloc?.trim();
 
-        let contenu =
-            req.body.contenu?.trim()
-            || null;
+            const ordre =
+                Number(req.body.ordre);
 
 
-        if (
-            !Number.isInteger(articleId) ||
-            articleId <= 0
-        ) {
+            if (
+                !Number.isInteger(articleId) ||
+                articleId <= 0
+            ) {
 
-            return res
-                .status(400)
-                .json({
+                return res.status(400).json({
                     message:
-                        "Identifiant d'article invalide."
+                        "article_id invalide."
                 });
-        }
+            }
 
 
-        const typesAutorises = [
-            "texte",
-            "image",
-            "video",
-            "audio",
-            "lien"
-        ];
+            if (!typeBloc) {
 
-
-        if (
-            !typesAutorises.includes(
-                typeBloc
-            )
-        ) {
-
-            return res
-                .status(400)
-                .json({
+                return res.status(400).json({
                     message:
-                        "Type de bloc invalide."
+                        "Le type du bloc est obligatoire."
                 });
-        }
+            }
 
 
-        if (
-            !Number.isInteger(ordre) ||
-            ordre <= 0
-        ) {
+            if (
+                !Number.isInteger(ordre) ||
+                ordre <= 0
+            ) {
 
-            return res
-                .status(400)
-                .json({
+                return res.status(400).json({
                     message:
-                        "Ordre du bloc invalide."
+                        "L'ordre du bloc est invalide."
                 });
-        }
+            }
 
 
-        /*
-        Si c'est une image,
-        vidéo ou audio :
-        req.file existe.
-        */
-
-        if (req.file) {
-
-            contenu =
-                req.file.filename;
-        }
+            let contenu =
+                req.body.contenu?.trim() || null;
 
 
-        if (!contenu) {
+            /* -----------------------------------------
+               SI C'EST UN FICHIER
+            ----------------------------------------- */
 
-            return res
-                .status(400)
-                .json({
-                    message:
-                        "Le bloc est vide."
-                });
-        }
+            if (
+                typeBloc === "image" ||
+                typeBloc === "video" ||
+                typeBloc === "audio"
+            ) {
 
+                if (!req.file) {
 
-        const sql = `
-            INSERT INTO article_blocs
-            (
-                article_id,
-                type_bloc,
-                contenu,
-                ordre
-            )
-            VALUES (?, ?, ?, ?)
-        `;
-
-
-        db.query(
-            sql,
-
-            [
-                articleId,
-                typeBloc,
-                contenu,
-                ordre
-            ],
-
-            (
-                erreur,
-                resultat
-            ) => {
-
-                if (erreur) {
-
-                    console.error(
-                        "Erreur pendant l'ajout du bloc :",
-                        erreur
-                    );
-
-
-                    return res
-                        .status(500)
-                        .json({
-                            message:
-                                "Erreur pendant l'ajout du bloc."
-                        });
+                    return res.status(400).json({
+                        message:
+                            "Aucun fichier n'a été envoyé."
+                    });
                 }
 
 
-                res.status(201).json({
-                    message:
-                        "Bloc ajouté avec succès.",
+                /*
+                   On sauvegarde le chemin du fichier
+                   dans la colonne contenu.
+                */
 
-                    id:
-                        resultat.insertId
-                });
+                contenu =
+                    `/uploads/${req.file.filename}`;
             }
-        );
+
+
+            /* -----------------------------------------
+               INSERTION DU BLOC
+            ----------------------------------------- */
+
+            const sql = `
+                INSERT INTO article_blocs
+                (
+                    article_id,
+                    type_bloc,
+                    contenu,
+                    ordre
+                )
+                VALUES (?, ?, ?, ?)
+            `;
+
+
+            db.query(
+                sql,
+                [
+                    articleId,
+                    typeBloc,
+                    contenu,
+                    ordre
+                ],
+                (
+                    erreur,
+                    resultat
+                ) => {
+
+                    if (erreur) {
+
+                        console.error(
+                            "Erreur bloc :",
+                            erreur
+                        );
+
+                        return res.status(500).json({
+                            message:
+                                "Impossible d'enregistrer le bloc."
+                        });
+                    }
+
+
+                    res.status(201).json({
+
+                        message:
+                            "Bloc enregistré avec succès.",
+
+                        id:
+                            resultat.insertId
+
+                    });
+
+                }
+            );
+
+
+        } catch (erreur) {
+
+            console.error(erreur);
+
+            res.status(500).json({
+                message:
+                    "Erreur interne du serveur."
+            });
+
+        }
+
     }
 );
 
 
-/* =========================
-   RÉCUPÉRER LES BLOCS
-   D'UN ARTICLE
-========================= */
+/* =====================================================
+   RÉCUPÉRER LES BLOCS D'UN ARTICLE
+===================================================== */
 
 app.get(
     "/article/:id/blocs",
@@ -838,9 +839,7 @@ app.get(
     (req, res) => {
 
         const articleId =
-            Number(
-                req.params.id
-            );
+            Number(req.params.id);
 
 
         if (
@@ -848,17 +847,20 @@ app.get(
             articleId <= 0
         ) {
 
-            return res
-                .status(400)
-                .json({
-                    message:
-                        "Identifiant d'article invalide."
-                });
+            return res.status(400).json({
+                message:
+                    "Identifiant d'article invalide."
+            });
         }
 
 
         const sql = `
-            SELECT *
+            SELECT
+                id,
+                article_id,
+                type_bloc,
+                contenu,
+                ordre
             FROM article_blocs
             WHERE article_id = ?
             ORDER BY ordre ASC, id ASC
@@ -867,9 +869,7 @@ app.get(
 
         db.query(
             sql,
-
             [articleId],
-
             (
                 erreur,
                 resultats
@@ -878,37 +878,32 @@ app.get(
                 if (erreur) {
 
                     console.error(
-                        "Erreur pendant la récupération des blocs :",
+                        "Erreur récupération blocs :",
                         erreur
                     );
 
-
-                    return res
-                        .status(500)
-                        .json({
-                            message:
-                                "Erreur pendant la récupération des blocs."
-                        });
+                    return res.status(500).json({
+                        message:
+                            "Impossible de récupérer les blocs."
+                    });
                 }
 
 
-                res.json(
-                    resultats
-                );
+                res.json(resultats);
+
             }
         );
+
     }
 );
 
 
-/* =========================
-   RÉCUPÉRER TOUS
-   LES CONTENUS
-========================= */
+/* =====================================================
+   RÉCUPÉRER TOUS LES ARTICLES
+===================================================== */
 
 app.get(
     "/contenus",
-
     (req, res) => {
 
         const categorie =
@@ -930,10 +925,7 @@ app.get(
                 WHERE categorie = ?
             `;
 
-
-            parametres.push(
-                categorie
-            );
+            parametres.push(categorie);
         }
 
 
@@ -944,9 +936,7 @@ app.get(
 
         db.query(
             sql,
-
             parametres,
-
             (
                 erreur,
                 resultats
@@ -955,43 +945,36 @@ app.get(
                 if (erreur) {
 
                     console.error(
-                        "Erreur pendant la récupération des contenus :",
+                        "Erreur récupération contenus :",
                         erreur
                     );
 
-
-                    return res
-                        .status(500)
-                        .json({
-                            message:
-                                "Erreur pendant la récupération des contenus."
-                        });
+                    return res.status(500).json({
+                        message:
+                            "Erreur pendant la récupération des contenus."
+                    });
                 }
 
 
-                res.json(
-                    resultats
-                );
+                res.json(resultats);
+
             }
         );
+
     }
 );
 
 
-/* =========================
+/* =====================================================
    RÉCUPÉRER UN ARTICLE
-   PAR ID
-========================= */
+===================================================== */
 
 app.get(
     "/article/:id",
-
     (req, res) => {
 
         const id =
-            Number(
-                req.params.id
-            );
+            Number(req.params.id);
 
 
         if (
@@ -999,12 +982,10 @@ app.get(
             id <= 0
         ) {
 
-            return res
-                .status(400)
-                .json({
-                    message:
-                        "Identifiant d’article invalide."
-                });
+            return res.status(400).json({
+                message:
+                    "Identifiant d’article invalide."
+            });
         }
 
 
@@ -1018,9 +999,7 @@ app.get(
 
         db.query(
             sql,
-
             [id],
-
             (
                 erreur,
                 resultats
@@ -1029,17 +1008,14 @@ app.get(
                 if (erreur) {
 
                     console.error(
-                        "Erreur pendant la récupération de l'article :",
+                        "Erreur article :",
                         erreur
                     );
 
-
-                    return res
-                        .status(500)
-                        .json({
-                            message:
-                                "Erreur pendant la récupération de l’article."
-                        });
+                    return res.status(500).json({
+                        message:
+                            "Erreur pendant la récupération de l’article."
+                    });
                 }
 
 
@@ -1047,43 +1023,43 @@ app.get(
                     resultats.length === 0
                 ) {
 
-                    return res
-                        .status(404)
-                        .json({
-                            message:
-                                "Article introuvable."
-                        });
+                    return res.status(404).json({
+                        message:
+                            "Article introuvable."
+                    });
                 }
 
 
                 res.json(
                     resultats[0]
                 );
+
             }
         );
+
     }
 );
 
 
-/* =========================
+/* =====================================================
    ROUTE TEST
-========================= */
+===================================================== */
 
 app.get(
     "/",
-
     (req, res) => {
 
         res.send(
             "Le serveur fonctionne correctement."
         );
+
     }
 );
 
 
-/* =========================
-   GESTION DES ERREURS
-========================= */
+/* =====================================================
+   ERREURS MULTER
+===================================================== */
 
 app.use(
     (
@@ -1094,8 +1070,7 @@ app.use(
     ) => {
 
         if (
-            erreur instanceof
-            multer.MulterError
+            erreur instanceof multer.MulterError
         ) {
 
             console.error(
@@ -1109,21 +1084,18 @@ app.use(
                 "LIMIT_FILE_SIZE"
             ) {
 
-                return res
-                    .status(400)
-                    .json({
-                        message:
-                            "Le fichier est trop volumineux. Maximum : 500 Mo."
-                    });
+                return res.status(400).json({
+                    message:
+                        "Le fichier est trop volumineux. Maximum : 500 Mo."
+                });
             }
 
 
-            return res
-                .status(400)
-                .json({
-                    message:
-                        erreur.message
-                });
+            return res.status(400).json({
+                message:
+                    erreur.message
+            });
+
         }
 
 
@@ -1135,31 +1107,30 @@ app.use(
             );
 
 
-            return res
-                .status(500)
-                .json({
-                    message:
-                        "Erreur interne du serveur."
-                });
+            return res.status(500).json({
+                message:
+                    "Erreur interne du serveur."
+            });
         }
 
 
         next();
+
     }
 );
 
 
-/* =========================
-   DÉMARRER LE SERVEUR
-========================= */
+/* =====================================================
+   DÉMARRER
+===================================================== */
 
 app.listen(
     PORT,
-
     () => {
 
         console.log(
             `Serveur lancé sur http://127.0.0.1:${PORT}`
         );
+
     }
 );

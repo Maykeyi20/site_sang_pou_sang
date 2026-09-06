@@ -194,6 +194,9 @@ async function publier() {
     const categorie = document.getElementById("categorie").value;
 
     const blocs = document.querySelectorAll(".bloc");
+    
+    const imageAccueil =
+    document.getElementById("imageAccueil").files[0];
 
     if (!titre || !author) {
         alert("Titre et auteur obligatoires.");
@@ -228,6 +231,10 @@ async function publier() {
     articleFormData.append("description", description);
     articleFormData.append("author", author);
     articleFormData.append("categorie", categorie);
+    
+    if (imageAccueil) {
+    articleFormData.append("image", imageAccueil);
+}
 
     const articleResponse = await fetch(
         "http://127.0.0.1:3000/contenus",
