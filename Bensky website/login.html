@@ -61,7 +61,7 @@ document
         try {
 
             const response = await fetch(
-                "http://127.0.0.1:3000/login",
+                "/login",
                 {
                     method: "POST",
 
@@ -72,8 +72,8 @@ document
                     credentials: "include",
 
                     body: JSON.stringify({
-                        username: username,
-                        password: password
+                        username,
+                        password
                     })
                 }
             );
@@ -82,7 +82,7 @@ document
 
             if (response.ok) {
 
-                window.location.href = "admin.html";
+                window.location.href = "/admin.html";
 
             } else {
 

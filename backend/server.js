@@ -1,6 +1,6 @@
 const express = require("express");
 const mysql = require("mysql2");
-const cors = require("cors");
+/*const cors = require("cors");*/
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
@@ -8,17 +8,18 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 
 const app = express();
-const PORT = 3000;
+const PORT =
+    process.env.PORT || 3000;
 
 
 /* =====================================================
    CORS
 ===================================================== */
 
-app.use(cors({
+/*app.use(cors({
     origin: "http://127.0.0.1:3000",
     credentials: true
-}));
+}));*/
 
 
 /* =====================================================
@@ -40,19 +41,31 @@ app.use(express.static(path.join(__dirname, "..", "Bensky website")));
    SESSION
 ===================================================== */
 
+app.set("trust proxy", 1);
+
 app.use(
     session({
-        secret: "monsite-secret-2026-change-moi-plus-tard",
+
+        secret:
+            process.env.SESSION_SECRET ||
+            "secret-local",
 
         resave: false,
 
         saveUninitialized: false,
 
         cookie: {
+
             httpOnly: true,
-            secure: false,
+
+            secure:
+                process.env.NODE_ENV ===
+                "production",
+
             sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000
+
+            maxAge:
+                24 * 60 * 60 * 1000
         }
     })
 );
@@ -63,26 +76,27 @@ app.use(
 ===================================================== */
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "monsite"
-});
 
+    host:
+        process.env.MYSQLHOST ||
+        "localhost",
 
-db.connect(erreur => {
+    port:
+        process.env.MYSQLPORT ||
+        3306,
 
-    if (erreur) {
+    user:
+        process.env.MYSQLUSER ||
+        "root",
 
-        console.error(
-            "Erreur de connexion à MySQL :",
-            erreur
-        );
+    password:
+        process.env.MYSQLPASSWORD ||
+        "",
 
-        process.exit(1);
-    }
+    database:
+        process.env.MYSQLDATABASE ||
+        "monsite"
 
-    console.log("Connecté à MySQL !");
 });
 
 

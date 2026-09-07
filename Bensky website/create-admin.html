@@ -87,37 +87,60 @@ Créer l'administrateur
 
 <script>
 
-async function creerAdmin(){
+async function creerAdmin() {
 
     const username =
-        document.getElementById("username").value;
+        document.getElementById("username").value.trim();
 
     const password =
         document.getElementById("password").value;
 
-    const reponse = await fetch(
-        "http://127.0.0.1:3000/create-admin",
-        {
+    const message =
+        document.getElementById("message");
 
-            method:"POST",
+    try {
 
-            headers:{
-                "Content-Type":"application/json"
-            },
+        const reponse = await fetch(
+            "/create-admin",
+            {
+                method: "POST",
 
-            body:JSON.stringify({
-                username,
-                password
-            })
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
+                credentials: "include",
+
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+            }
+        );
+
+        const resultat =
+            await reponse.json();
+
+        message.textContent =
+            resultat.message;
+
+        if (reponse.ok) {
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "/login.html";
+
+            }, 1500);
         }
-    );
 
-    const resultat = await reponse.json();
+    } catch (erreur) {
 
-    document.getElementById("message").innerHTML =
-        resultat.message;
+        console.error(erreur);
 
+        message.textContent =
+            "Impossible de contacter le serveur.";
+    }
 }
 
 </script>
