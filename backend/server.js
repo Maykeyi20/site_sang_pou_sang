@@ -33,11 +33,7 @@ app.use(
     })
 );
 
-app.use(
-    express.static(
-        path.join(__dirname, "..", "Bensky website")
-    )
-);
+app.use(express.static(path.join(__dirname, "..", "Bensky website")));
 
 
 /* =====================================================
