@@ -1,0 +1,94 @@
+/* Style global */
+body {
+    background-color: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Titres */
+h1 {
+    color: red;
+    font-size: 2.2rem;
+    margin-top: 40px;
+}
+
+/* Div normal */
+div {
+    font-size: 1.3rem;
+    margin-top: 10px;
+}
+
+/* Valè youn anba lòt */
+.valeurs {
+    display: flex;
+    flex-direction: column; /* Mete yo youn anba lòt */
+    gap: 10px;              /* Espas ant chak valè */
+    font-size: 1.3rem;
+    color: white;
+}
+
+footer {
+    margin-top: 50px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+    border-top: 1px solid #f90000; /* Ti liy pou separe footer la */
+    border-left: 1px solid #f90000; /* Ti liy pou separe footer la */
+    border-right: 1px solid #f90000; /* Ti liy pou separe footer la */
+}
+
+.yt-link i {
+    display: flex;
+    justify-content: center;  /* centre horizontalement */
+    margin-bottom: 30px;
+    margin-top: 10px;   
+    font-size: 50px;
+    color: #ff0000;
+    transition: 0.3s;
+    
+    
+}
+
+.yt-link i:hover {
+    color: #b00404;
+    transform: scale(1.1);
+}
+
+a {
+    text-decoration: none; /* retire liy anba oswa anlè */
+}
+
+#swiv-nou{
+    display: flex;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 20px;
+    font-size: 15px;
+    color: #d71920;
+}
+
+
+
+/* Responsive pou tablettes */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    div, .valeurs {
+        font-size: 1.1rem;
+    }
+}
+
+/* Responsive pou téléphones */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+    div, .valeurs {
+        font-size: 1rem;
+    }
+}

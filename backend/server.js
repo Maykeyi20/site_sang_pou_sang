@@ -34,7 +34,7 @@ app.use(
     })
 );
 
-app.use(express.static(path.join(__dirname, "..", "Bensky website")));
+app.use(express.static(path.join(__dirname, "public")));
 
 
 /* =====================================================
@@ -97,6 +97,20 @@ const db = mysql.createConnection({
         process.env.MYSQLDATABASE ||
         "monsite"
 
+});
+
+
+db.connect((erreur) => {
+
+    if (erreur) {
+        console.error(
+            "Erreur de connexion à MySQL :",
+            erreur
+        );
+        return;
+    }
+
+    console.log("Connecté à MySQL !");
 });
 
 

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+    <title>Administration</title>
+</head>
+
+<body>
+
+<h1>POU PIBLIYE</h1>
+
+<button
+    type="button"
+    onclick="deconnexion()"
+>
+    Déconnexion
+</button>
+
+<br><br>
+
+<form
+    onsubmit="publier(); return false;"
+    enctype="multipart/form-data"
+>
+
+    <input
+        id="titre"
+        placeholder="Titre"
+        required
+    >
+
+    <br><br>
+
+    <input
+        id="author"
+        placeholder="Auteur"
+        required
+    >
+
+    <br><br>
+
+    <select id="categorie">
+
+        <option value="sinema">
+            Cinéma
+        </option>
+
+        <option value="sport">
+            Sport
+        </option>
+
+        <option value="mizik">
+            Musique
+        </option>
+
+        <option value="diversite">
+            Diversité
+        </option>
+
+        <option value="lidechip">
+            Leadership
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <label>
+        Image d'accueil :
+    </label>
+
+    <br>
+
+    <input
+        type="file"
+        id="imageAccueil"
+        accept="image/*"
+    >
+
+    <br><br>
+
+    <h2>Construire l'article</h2>
+
+    <button
+        type="button"
+        onclick="ajouterTexte()"
+    >
+        + Paragraphe
+    </button>
+
+    <button
+        type="button"
+        onclick="ajouterImage()"
+    >
+        + Image
+    </button>
+
+    <button
+        type="button"
+        onclick="ajouterVideo()"
+    >
+        + Vidéo
+    </button>
+
+    <button
+        type="button"
+        onclick="ajouterAudio()"
+    >
+        + Audio
+    </button>
+
+    <button
+        type="button"
+        onclick="ajouterLien()"
+    >
+        + Lien
+    </button>
+
+    <br><br>
+
+    <div id="blocs-container"></div>
+
+    <br>
+
+    <button type="submit">
+        Publier
+    </button>
+
+</form>
+
+<script src="admin.js"></script>
+
+</body>
+</html>
