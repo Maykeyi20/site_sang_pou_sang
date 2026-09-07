@@ -233,8 +233,9 @@ async function publier() {
     articleFormData.append("categorie", categorie);
     
     if (imageAccueil) {
-    articleFormData.append("image", imageAccueil);
-}
+    articleFormData.append("imageAccueil", imageAccueil);
+    }
+
 
     const articleResponse = await fetch(
         "http://127.0.0.1:3000/contenus",

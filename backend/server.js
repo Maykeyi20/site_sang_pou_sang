@@ -16,7 +16,7 @@ const PORT = 3000;
 ===================================================== */
 
 app.use(cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "http://127.0.0.1:3000",
     credentials: true
 }));
 
@@ -31,6 +31,12 @@ app.use(
     express.urlencoded({
         extended: true
     })
+);
+
+app.use(
+    express.static(
+        path.join(__dirname, "..", "Bensky website")
+    )
 );
 
 
@@ -557,11 +563,10 @@ app.post(
                IMAGE D'ACCUEIL
             ----------------------------------------- */
 
-            const imageAccueil =
-                req.files?.imageAccueil?.[0]
-                    ? req.files.imageAccueil[0].filename
-                    : null;
-
+           const imageAccueil =
+            req.files?.imageAccueil?.[0]
+            ? `/uploads/${req.files.imageAccueil[0].filename}`
+            : null;
 
             /*
                Ancienne colonne type
