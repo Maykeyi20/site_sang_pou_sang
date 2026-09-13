@@ -83,11 +83,34 @@ fetch("/contenus")
         return response.json();
     })
 
-    .then(function(contenus) {
+   .then(function(contenus) {
 
-        console.log("Articles reçus :", contenus);
+    console.log("Articles reçus :", contenus);
 
-    })
+    const sectionArticles = document.getElementById("articles");
+
+    contenus.forEach(function(article) {
+
+        const blocArticle = document.createElement("article");
+
+        const titre = document.createElement("h2");
+        titre.textContent = article.titre;
+
+        const description = document.createElement("p");
+        description.textContent = article.description;
+
+        const auteur = document.createElement("p");
+        auteur.textContent = "Auteur : " + article.author;
+
+        blocArticle.appendChild(titre);
+        blocArticle.appendChild(description);
+        blocArticle.appendChild(auteur);
+
+        sectionArticles.appendChild(blocArticle);
+
+    });
+
+})
 
     .catch(function(error) {
 
