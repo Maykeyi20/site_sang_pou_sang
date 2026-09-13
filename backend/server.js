@@ -1071,20 +1071,16 @@ app.get(
 
 
 /* =====================================================
-   ROUTE TEST
+   PAGE D'ACCUEIL
 ===================================================== */
 
-app.get(
-    "/",
-    (req, res) => {
+app.get("/", (req, res) => {
 
-        res.send(
-            "Le serveur fonctionne correctement."
-        );
+    res.sendFile(
+        path.join(__dirname, "public", "structure.html")
+    );
 
-    }
-);
-
+});
 
 /* =====================================================
    ERREURS MULTER
