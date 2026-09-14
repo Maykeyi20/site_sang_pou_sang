@@ -734,5 +734,83 @@ async function publier() {
 /* =====================================================
    LANCEMENT
 ===================================================== */
+async function chargerArticlesAdmin() {
+
+    const response =
+        await fetch(
+            "/contenus",
+            {
+                credentials: "include"
+            }
+        );
+
+    const articles =
+        await response.json();
+
+    const container =
+        document.getElementById(
+            "liste-admin-articles"
+        );
+
+    container.innerHTML = "";
+
+    articles.forEach(article => {
+
+        const bloc =
+            document.createElement("div");
+
+        bloc.innerHTML = `
+            <h3>${article.titre}</h3>
+
+            <p>
+                Catégorie :
+                ${article.categorie}
+            </p>
+
+            <button
+                type="button"
+                onclick="supprimerArticle(${article.id})"
+            >
+                Supprimer
+            </button>
+
+            <hr>
+        `;
+
+        container.appendChild(bloc);
+    });
+}
+
+async function supprimerArticle(id) {
+
+    const confirmation =
+        confirm(
+            "Voulez-vous vraiment supprimer cet article ?"
+        );
+
+    if (!confirmation) {
+        return;
+    }
+
+    const response =
+        await fetch(
+            "/contenus/" + id,
+            {
+                method: "DELETE",
+                credentials: "include"
+            }
+        );
+
+    const resultat =
+        await response.json();
+
+    alert(resultat.message);
+
+    if (response.ok) {
+        chargerArticlesAdmin();
+    }
+}
 
 verifierConnexion();
+
+chargerArticlesAdmin();
