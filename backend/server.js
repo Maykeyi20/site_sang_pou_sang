@@ -928,6 +928,87 @@ app.get(
 
 
 /* =====================================================
+   SUPPRIMER UN ARTICLE
+===================================================== */
+
+app.delete(
+    "/contenus/:id",
+    adminSeulement,
+    (req, res) => {
+
+        const articleId =
+            Number(req.params.id);
+
+        if (
+            !Number.isInteger(articleId) ||
+            articleId <= 0
+        ) {
+            return res.status(400).json({
+                message: "Identifiant invalide."
+            });
+        }
+
+        const supprimerBlocs = `
+            DELETE FROM article_blocs
+            WHERE article_id = ?
+        `;
+
+        db.query(
+            supprimerBlocs,
+            [articleId],
+            erreur => {
+
+                if (erreur) {
+                    console.error(erreur);
+
+                    return res.status(500).json({
+                        message:
+                            "Erreur pendant la suppression des blocs."
+                    });
+                }
+
+                const supprimerArticle = `
+                    DELETE FROM contenus
+                    WHERE id = ?
+                `;
+
+                db.query(
+                    supprimerArticle,
+                    [articleId],
+                    (erreur, resultat) => {
+
+                        if (erreur) {
+                            console.error(erreur);
+
+                            return res.status(500).json({
+                                message:
+                                    "Erreur pendant la suppression de l'article."
+                            });
+                        }
+
+                        if (
+                            resultat.affectedRows === 0
+                        ) {
+                            return res.status(404).json({
+                                message:
+                                    "Article introuvable."
+                            });
+                        }
+
+                        res.json({
+                            message:
+                                "Article supprimé avec succès."
+                        });
+
+                    }
+                );
+            }
+        );
+    }
+);
+
+
+/* =====================================================
    RÉCUPÉRER TOUS LES ARTICLES
 ===================================================== */
 
