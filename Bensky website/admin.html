@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
 
@@ -29,13 +30,14 @@
 
 <br><br>
 
+
+<!-- ==============================
+     FORMULAIRE DE PUBLICATION
+================================ -->
+
 <form
     onsubmit="publier(); return false;"
     enctype="multipart/form-data"
-
-    <h2>Articles publiés</h2>
-
-    <div id="liste-admin-articles"></div>
 >
 
     <input
@@ -46,6 +48,7 @@
 
     <br><br>
 
+
     <input
         id="author"
         placeholder="Auteur"
@@ -53,6 +56,7 @@
     >
 
     <br><br>
+
 
     <select id="categorie">
 
@@ -80,6 +84,7 @@
 
     <br><br>
 
+
     <label>
         Image d'accueil :
     </label>
@@ -94,7 +99,9 @@
 
     <br><br>
 
+
     <h2>Construire l'article</h2>
+
 
     <button
         type="button"
@@ -103,12 +110,14 @@
         + Paragraphe
     </button>
 
+
     <button
         type="button"
         onclick="ajouterImage()"
     >
         + Image
     </button>
+
 
     <button
         type="button"
@@ -117,12 +126,14 @@
         + Vidéo
     </button>
 
+
     <button
         type="button"
         onclick="ajouterAudio()"
     >
         + Audio
     </button>
+
 
     <button
         type="button"
@@ -133,9 +144,11 @@
 
     <br><br>
 
+
     <div id="blocs-container"></div>
 
     <br>
+
 
     <button type="submit">
         Publier
@@ -143,7 +156,21 @@
 
 </form>
 
+
+<hr>
+
+
+<!-- ==============================
+     ARTICLES DÉJÀ PUBLIÉS
+================================ -->
+
+<h2>Articles publiés</h2>
+
+<div id="liste-admin-articles"></div>
+
+
 <script src="admin.js"></script>
 
 </body>
+
 </html>
