@@ -140,6 +140,33 @@ function convertirYoutube(url) {
 }
 
 
+
+function creerDate(date) {
+
+    if (!date) return "";
+
+    const datePublication =
+        new Date(date);
+
+    if (
+        Number.isNaN(
+            datePublication.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    return datePublication.toLocaleDateString(
+        "fr-CA",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }
+    );
+}
+
+
 /* =========================
    RÉCUPÉRER ID ARTICLE
 ========================= */
