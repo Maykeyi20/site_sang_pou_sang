@@ -355,6 +355,8 @@ async function publier() {
                 ".bloc-texte"
             );
 
+            
+            
         if (
             textarea &&
             textarea.value.trim()
@@ -410,84 +412,145 @@ async function publier() {
         );
     }
 
-    /* =================================================
-   SAUVEGARDER UNE MODIFICATION
-================================================= */
+    if (window.articleEnModification) {
 
-if (window.articleEnModification) {
 
-    try {
+    
+        try {
 
         /* =============================================
-   MODIFIER LES PARAGRAPHES EXISTANTS
-============================================= */
+           MODIFIER LES BLOCS TEXTE ET LIEN EXISTANTS
+        ============================================= */
 
-for (let index = 0; index < blocs.length; index++) {
+        for (let index = 0; index < blocs.length; index++) {
 
-    const bloc = blocs[index];
+            const bloc = blocs[index];
 
-    const blocId = bloc.dataset.blocId;
+            const blocId =
+                bloc.dataset.blocId;
 
-    const textarea =
-        bloc.querySelector(".bloc-texte");
+            const textarea =
+                bloc.querySelector(".bloc-texte");
 
-    // Pour l'instant, on modifie seulement
-    // les paragraphes déjà existants
-    if (blocId && textarea) {
+            const lien =
+                bloc.querySelector(".bloc-lien");
 
-        const formDataBloc =
-            new FormData();
 
-        formDataBloc.append(
-            "type_bloc",
-            "texte"
-        );
+            /* =========================================
+               MODIFIER UN PARAGRAPHE
+            ========================================= */
 
-        formDataBloc.append(
-            "contenu",
-            textarea.value.trim()
-        );
+            if (blocId && textarea) {
 
-        formDataBloc.append(
-            "ordre",
-            index + 1
-        );
+                const formDataBloc =
+                    new FormData();
 
-        const responseBloc =
+                formDataBloc.append(
+                    "type_bloc",
+                    "texte"
+                );
+
+                formDataBloc.append(
+                    "contenu",
+                    textarea.value.trim()
+                );
+
+                formDataBloc.append(
+                    "ordre",
+                    index + 1
+                );
+
+                const responseBloc =
+                    await fetch(
+                        "/article-blocs/" + blocId,
+                        {
+                            method: "PUT",
+                            credentials: "include",
+                            body: formDataBloc
+                        }
+                    );
+
+                const resultatBloc =
+                    await responseBloc.json();
+
+                if (!responseBloc.ok) {
+
+                    alert(
+                        resultatBloc.message ||
+                        "Erreur pendant la modification du paragraphe."
+                    );
+
+                    return;
+                }
+            }
+
+
+            /* =========================================
+               MODIFIER UN LIEN
+            ========================================= */
+
+            if (blocId && lien) {
+
+                const formDataLien =
+                    new FormData();
+
+                formDataLien.append(
+                    "type_bloc",
+                    "lien"
+                );
+
+                formDataLien.append(
+                    "contenu",
+                    lien.value.trim()
+                );
+
+                formDataLien.append(
+                    "ordre",
+                    index + 1
+                );
+
+                const responseLien =
+                    await fetch(
+                        "/article-blocs/" + blocId,
+                        {
+                            method: "PUT",
+                            credentials: "include",
+                            body: formDataLien
+                        }
+                    );
+
+                const resultatLien =
+                    await responseLien.json();
+
+                if (!responseLien.ok) {
+
+                    alert(
+                        resultatLien.message ||
+                        "Erreur pendant la modification du lien."
+                    );
+
+                    return;
+                }
+            }
+        }
+
+
+        /* =============================================
+           MODIFIER LES INFORMATIONS DE L'ARTICLE
+        ============================================= */
+
+        const response =
             await fetch(
-                "/article-blocs/" + blocId,
+                "/contenus/" + window.articleEnModification,
                 {
                     method: "PUT",
                     credentials: "include",
-                    body: formDataBloc
+                    body: articleFormData
                 }
             );
 
-        const resultatBloc =
-            await responseBloc.json();
-
-        if (!responseBloc.ok) {
-
-            alert(
-                resultatBloc.message ||
-                "Erreur pendant la modification du paragraphe."
-            );
-
-            return;
-        }
-    }
-}
-
-        const response = await fetch(
-            "/contenus/" + window.articleEnModification,
-            {
-                method: "PUT",
-                credentials: "include",
-                body: articleFormData
-            }
-        );
-
-        const resultat = await response.json();
+        const resultat =
+            await response.json();
 
         if (!response.ok) {
 
@@ -499,7 +562,10 @@ for (let index = 0; index < blocs.length; index++) {
             return;
         }
 
-        alert("Article modifié avec succès !");
+
+        alert(
+            "Article modifié avec succès !"
+        );
 
         window.articleEnModification = null;
 
@@ -512,10 +578,14 @@ for (let index = 0; index < blocs.length; index++) {
             .innerHTML = "";
 
         const bouton =
-            document.getElementById("bouton-publier");
+            document.getElementById(
+                "bouton-publier"
+            );
 
         if (bouton) {
-            bouton.textContent = "Publier";
+
+            bouton.textContent =
+                "Publier";
         }
 
         chargerArticlesAdmin();
@@ -534,9 +604,7 @@ for (let index = 0; index < blocs.length; index++) {
     }
 }
 
-
     let articleResponse;
-
     try {
 
         articleResponse =
@@ -991,16 +1059,24 @@ async function modifierArticle(id) {
     }
 
 
-            else if (bloc.type_bloc === "lien") {
+           else if (bloc.type_bloc === "lien") {
 
-                ajouterLien();
+        ajouterLien();
 
-                const liens =
-                    document.querySelectorAll(".bloc-lien");
+        const blocsFormulaire =
+        document.querySelectorAll(".bloc");
 
-                liens[liens.length - 1].value =
-                    bloc.contenu;
-            }
+        const dernierBloc =
+        blocsFormulaire[blocsFormulaire.length - 1];
+
+        // Mémoriser l'ID du lien dans MySQL
+        dernierBloc.dataset.blocId = bloc.id;
+
+        const lien =
+        dernierBloc.querySelector(".bloc-lien");
+
+        lien.value = bloc.contenu;
+    }
 
 
             else if (bloc.type_bloc === "image") {
