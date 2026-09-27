@@ -32,59 +32,111 @@ function echapperTexte(texte) {
 }
 
 function convertirYoutube(url) {
+
     if (!url) return "";
 
     try {
+
         const adresse = new URL(url);
+
         let videoId = "";
 
-        if (adresse.hostname.includes("youtu.be")) {
-            videoId = adresse.pathname
-                .replace("/", "")
-                .split("?")[0];
+
+        // Exemple :
+        // https://youtu.be/ABC123
+        if (
+            adresse.hostname === "youtu.be" ||
+            adresse.hostname === "www.youtu.be"
+        ) {
+
+            videoId =
+                adresse.pathname
+                    .replace("/", "")
+                    .split("?")[0];
         }
 
-        if (adresse.hostname.includes("youtube.com")) {
-            videoId = adresse.searchParams.get("v");
 
-            if (!videoId && adresse.pathname.includes("/embed/")) {
-                videoId = adresse.pathname
-                    .split("/embed/")[1]
-                    .split("?")[0];
+        // youtube.com
+        if (
+            adresse.hostname.includes("youtube.com")
+        ) {
+
+            // Exemple :
+            // youtube.com/watch?v=ABC123
+
+            if (
+                adresse.pathname === "/watch"
+            ) {
+
+                videoId =
+                    adresse.searchParams.get("v");
             }
 
-            if (!videoId && adresse.pathname.includes("/shorts/")) {
-                videoId = adresse.pathname
-                    .split("/shorts/")[1]
-                    .split("?")[0];
+
+            // Exemple :
+            // youtube.com/embed/ABC123
+
+            else if (
+                adresse.pathname.startsWith("/embed/")
+            ) {
+
+                videoId =
+                    adresse.pathname
+                        .split("/embed/")[1]
+                        .split("/")[0];
+            }
+
+
+            // Exemple :
+            // youtube.com/shorts/ABC123
+
+            else if (
+                adresse.pathname.startsWith("/shorts/")
+            ) {
+
+                videoId =
+                    adresse.pathname
+                        .split("/shorts/")[1]
+                        .split("/")[0];
+            }
+
+
+            // Exemple :
+            // youtube.com/live/ABC123
+
+            else if (
+                adresse.pathname.startsWith("/live/")
+            ) {
+
+                videoId =
+                    adresse.pathname
+                        .split("/live/")[1]
+                        .split("/")[0];
             }
         }
 
+
+        // Si on trouve l'ID
         if (videoId) {
-            return `https://www.youtube.com/embed/${videoId}`;
+
+            return (
+                "https://www.youtube.com/embed/" +
+                videoId
+            );
         }
 
-        return url;
+
+        return "";
 
     } catch (erreur) {
-        return url;
-    }
-}
 
-function creerDate(date) {
-    if (!date) return "";
+        console.error(
+            "Lien YouTube invalide :",
+            url
+        );
 
-    const datePublication = new Date(date);
-
-    if (Number.isNaN(datePublication.getTime())) {
         return "";
     }
-
-    return datePublication.toLocaleDateString("fr-CA", {
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    });
 }
 
 
