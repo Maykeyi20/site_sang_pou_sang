@@ -418,6 +418,66 @@ if (window.articleEnModification) {
 
     try {
 
+        /* =============================================
+   MODIFIER LES PARAGRAPHES EXISTANTS
+============================================= */
+
+for (let index = 0; index < blocs.length; index++) {
+
+    const bloc = blocs[index];
+
+    const blocId = bloc.dataset.blocId;
+
+    const textarea =
+        bloc.querySelector(".bloc-texte");
+
+    // Pour l'instant, on modifie seulement
+    // les paragraphes déjà existants
+    if (blocId && textarea) {
+
+        const formDataBloc =
+            new FormData();
+
+        formDataBloc.append(
+            "type_bloc",
+            "texte"
+        );
+
+        formDataBloc.append(
+            "contenu",
+            textarea.value.trim()
+        );
+
+        formDataBloc.append(
+            "ordre",
+            index + 1
+        );
+
+        const responseBloc =
+            await fetch(
+                "/article-blocs/" + blocId,
+                {
+                    method: "PUT",
+                    credentials: "include",
+                    body: formDataBloc
+                }
+            );
+
+        const resultatBloc =
+            await responseBloc.json();
+
+        if (!responseBloc.ok) {
+
+            alert(
+                resultatBloc.message ||
+                "Erreur pendant la modification du paragraphe."
+            );
+
+            return;
+        }
+    }
+}
+
         const response = await fetch(
             "/contenus/" + window.articleEnModification,
             {
@@ -911,16 +971,24 @@ async function modifierArticle(id) {
         // 5. Remettre les blocs de l'article dans le formulaire
         blocs.forEach(function(bloc) {
 
-            if (bloc.type_bloc === "texte") {
+           if (bloc.type_bloc === "texte") {
 
-                ajouterTexte();
+            ajouterTexte();
 
-                const textes =
-                    document.querySelectorAll(".bloc-texte");
+            const blocsFormulaire =
+            document.querySelectorAll(".bloc");
 
-                textes[textes.length - 1].value =
-                    bloc.contenu;
-            }
+            const dernierBloc =
+        blocsFormulaire[blocsFormulaire.length - 1];
+
+         // Mémoriser l'ID du bloc dans MySQL
+        dernierBloc.dataset.blocId = bloc.id;
+
+        const textarea =
+        dernierBloc.querySelector(".bloc-texte");
+
+      textarea.value = bloc.contenu;
+    }
 
 
             else if (bloc.type_bloc === "lien") {

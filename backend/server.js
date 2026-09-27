@@ -857,6 +857,110 @@ app.post(
     }
 );
 
+/* =====================================================
+   MODIFIER UN BLOC D'ARTICLE
+===================================================== */
+
+app.put(
+    "/article-blocs/:id",
+    adminSeulement,
+    upload.single("fichier"),
+    (req, res) => {
+
+        const blocId = Number(req.params.id);
+
+        const {
+            type_bloc,
+            contenu,
+            ordre
+        } = req.body;
+
+
+        if (!blocId || !type_bloc || !ordre) {
+
+            return res.status(400).json({
+                message: "Informations du bloc invalides."
+            });
+        }
+
+
+        let nouveauContenu = contenu || "";
+
+
+        // Si l'admin choisit un nouveau fichier
+        if (req.file) {
+
+            nouveauContenu =
+                "/uploads/" + req.file.filename;
+        }
+
+
+        // Image / vidéo / audio existante
+        // Si aucun nouveau fichier n'est envoyé,
+        // on conserve l'ancien contenu.
+        if (
+            ["image", "video", "audio"]
+                .includes(type_bloc) &&
+            !req.file &&
+            !nouveauContenu
+        ) {
+
+            return res.status(400).json({
+                message:
+                    "Le fichier existant est manquant."
+            });
+        }
+
+
+        const sql = `
+            UPDATE article_blocs
+            SET
+                type_bloc = ?,
+                contenu = ?,
+                ordre = ?
+            WHERE id = ?
+        `;
+
+
+        db.query(
+            sql,
+            [
+                type_bloc,
+                nouveauContenu,
+                ordre,
+                blocId
+            ],
+            (erreur, resultat) => {
+
+                if (erreur) {
+
+                    console.error(erreur);
+
+                    return res.status(500).json({
+                        message:
+                            "Erreur pendant la modification du bloc."
+                    });
+                }
+
+
+                if (resultat.affectedRows === 0) {
+
+                    return res.status(404).json({
+                        message:
+                            "Bloc introuvable."
+                    });
+                }
+
+
+                res.json({
+                    message:
+                        "Bloc modifié avec succès."
+                });
+            }
+        );
+    }
+);
+
 
 /* =====================================================
    RÉCUPÉRER LES BLOCS D'UN ARTICLE
