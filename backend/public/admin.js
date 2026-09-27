@@ -1287,3 +1287,37 @@ async function supprimerArticle(id) {
 verifierConnexion();
 
 chargerArticlesAdmin();
+
+function rechercherArticle() {
+
+    const recherche =
+        document
+            .getElementById("recherche-article")
+            .value
+            .toLowerCase()
+            .trim();
+
+    const articles =
+        document.querySelectorAll(
+            "#liste-admin-articles > div"
+        );
+
+    articles.forEach(article => {
+
+        const titre =
+            article
+                .querySelector("h3")
+                ?.textContent
+                .toLowerCase() || "";
+
+        if (titre.includes(recherche)) {
+
+            article.style.display = "";
+
+        } else {
+
+            article.style.display = "none";
+        }
+
+    });
+}
