@@ -1,11 +1,264 @@
-form{
-     width: 200px;
-     margin: 0 auto;
+/* =========================
+   BASE
+========================= */
+
+* {
+    box-sizing: border-box;
 }
 
-h1{
+body {
+    margin: 0;
+    padding: 30px 20px;
 
-     width: 200px;
-     margin: 0 auto;
+    font-family: Arial, sans-serif;
 
+    background-color: #f5f5f5;
+    color: #222;
+}
+
+
+/* =========================
+   TITRE PRINCIPAL
+========================= */
+
+h1 {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto 20px;
+
+    font-size: 30px;
+}
+
+
+/* =========================
+   FORMULAIRE
+========================= */
+
+form {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 30px auto;
+
+    padding: 30px;
+
+    background-color: white;
+
+    border-radius: 10px;
+
+    box-shadow: 0 2px 10px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================
+   CHAMPS
+========================= */
+
+input,
+select,
+textarea {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 12px;
+
+    font-size: 16px;
+
+    border: 1px solid #ccc;
+    border-radius: 6px;
+
+    font-family: inherit;
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* =========================
+   BOUTONS
+========================= */
+
+button {
+    padding: 11px 16px;
+
+    margin: 5px 3px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: #222;
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #444;
+}
+
+
+/* =========================
+   BOUTON PUBLIER
+========================= */
+
+#bouton-publier {
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 14px;
+
+    font-size: 17px;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   BLOCS DE L'ARTICLE
+========================= */
+
+#blocs-container {
+    width: 100%;
+}
+
+.bloc {
+    width: 100%;
+
+    margin-top: 15px;
+
+    padding: 20px;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+
+/* Images dans l'administration */
+
+.bloc img,
+.bloc video {
+    display: block;
+
+    width: 100%;
+    max-width: 500px;
+
+    height: auto;
+
+    margin-top: 10px;
+}
+
+.bloc audio {
+    width: 100%;
+    max-width: 500px;
+}
+
+
+/* =========================
+   ARTICLES PUBLIÉS
+========================= */
+
+body > h2 {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 40px auto 20px;
+}
+
+#liste-admin-articles {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto 50px;
+}
+
+#liste-admin-articles > div {
+    width: 100%;
+
+    padding: 20px;
+
+    margin-bottom: 15px;
+
+    background-color: white;
+
+    border-radius: 8px;
+
+    box-shadow: 0 2px 8px
+        rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================
+   TABLETTE
+========================= */
+
+@media (max-width: 768px) {
+
+    body {
+        padding: 20px 15px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    form {
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    h2 {
+        font-size: 21px;
+    }
+}
+
+
+/* =========================
+   TÉLÉPHONE
+========================= */
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 15px 10px;
+    }
+
+    h1 {
+        font-size: 23px;
+    }
+
+    form {
+        padding: 15px;
+
+        border-radius: 7px;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+
+        min-height: 44px;
+
+        margin: 5px 0;
+    }
+
+    .bloc {
+        padding: 15px;
+    }
+
+    #liste-admin-articles > div {
+        padding: 15px;
+    }
 }

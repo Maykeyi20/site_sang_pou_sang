@@ -254,17 +254,12 @@ async function chargerArticle() {
                 <div class="informations-article-complet">
 
                     <span>
-                        Par ${echapperTexte(
-                            article.author ||
-                            "Auteur inconnu"
-                        )}
-                    </span>
-
-                    <span>
-                        ${creerDate(
-                            article.date_publication
-                        )}
-                    </span>
+    Par ${echapperTexte(
+        article.author || "Auteur inconnu"
+    )}
+    •
+    ${creerDate(article.date_publication)}
+</span>
 
                 </div>
 
