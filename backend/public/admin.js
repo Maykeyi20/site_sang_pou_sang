@@ -484,6 +484,66 @@ async function publier() {
                 }
             }
 
+            /* =========================================
+   AJOUTER UN NOUVEAU LIEN
+========================================= */
+
+if (!blocId && lien) {
+
+    const nouveauLien =
+        lien.value.trim();
+
+    if (!nouveauLien) {
+        continue;
+    }
+
+    const formDataNouveauLien =
+        new FormData();
+
+    formDataNouveauLien.append(
+        "article_id",
+        window.articleEnModification
+    );
+
+    formDataNouveauLien.append(
+        "type_bloc",
+        "lien"
+    );
+
+    formDataNouveauLien.append(
+        "contenu",
+        nouveauLien
+    );
+
+    formDataNouveauLien.append(
+        "ordre",
+        index + 1
+    );
+
+    const responseNouveauLien =
+        await fetch(
+            "/article-blocs",
+            {
+                method: "POST",
+                credentials: "include",
+                body: formDataNouveauLien
+            }
+        );
+
+    const resultatNouveauLien =
+        await responseNouveauLien.json();
+
+    if (!responseNouveauLien.ok) {
+
+        alert(
+            resultatNouveauLien.message ||
+            "Erreur pendant l'ajout du nouveau lien."
+        );
+
+        return;
+    }
+}
+
 
             /* =========================================
                MODIFIER UN LIEN
