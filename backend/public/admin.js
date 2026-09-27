@@ -410,6 +410,70 @@ async function publier() {
         );
     }
 
+    /* =================================================
+   SAUVEGARDER UNE MODIFICATION
+================================================= */
+
+if (window.articleEnModification) {
+
+    try {
+
+        const response = await fetch(
+            "/contenus/" + window.articleEnModification,
+            {
+                method: "PUT",
+                credentials: "include",
+                body: articleFormData
+            }
+        );
+
+        const resultat = await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                resultat.message ||
+                "Erreur pendant la modification."
+            );
+
+            return;
+        }
+
+        alert("Article modifié avec succès !");
+
+        window.articleEnModification = null;
+
+        document
+            .querySelector("form")
+            .reset();
+
+        document
+            .getElementById("blocs-container")
+            .innerHTML = "";
+
+        const bouton =
+            document.getElementById("bouton-publier");
+
+        if (bouton) {
+            bouton.textContent = "Publier";
+        }
+
+        chargerArticlesAdmin();
+
+        return;
+
+    } catch (erreur) {
+
+        console.error(erreur);
+
+        alert(
+            "Impossible de sauvegarder les modifications."
+        );
+
+        return;
+    }
+}
+
 
     let articleResponse;
 
@@ -768,6 +832,15 @@ async function chargerArticlesAdmin() {
             </p>
 
             <button
+            type="button"
+            onclick="modifierArticle(${article.id})"
+        >
+        Modifier
+        </button>
+
+
+
+            <button
                 type="button"
                 onclick="supprimerArticle(${article.id})"
             >
@@ -779,6 +852,202 @@ async function chargerArticlesAdmin() {
 
         container.appendChild(bloc);
     });
+}
+
+async function modifierArticle(id) {
+
+    try {
+
+        // 1. Récupérer l'article
+        const response = await fetch(
+            "/article/" + id,
+            {
+                credentials: "include"
+            }
+        );
+
+        if (!response.ok) {
+            alert("Impossible de récupérer l'article.");
+            return;
+        }
+
+        const article = await response.json();
+
+
+        // 2. Mettre les informations dans le formulaire
+        document.getElementById("titre").value =
+            article.titre || "";
+
+        document.getElementById("author").value =
+            article.author || "";
+
+        document.getElementById("categorie").value =
+            article.categorie || "";
+
+
+        // 3. Récupérer les blocs de l'article
+        const blocsResponse = await fetch(
+            "/article/" + id + "/blocs",
+            {
+                credentials: "include"
+            }
+        );
+
+        if (!blocsResponse.ok) {
+            alert("Impossible de récupérer le contenu de l'article.");
+            return;
+        }
+
+        const blocs = await blocsResponse.json();
+
+
+        // 4. Vider les anciens blocs du formulaire
+        const container =
+            document.getElementById("blocs-container");
+
+        container.innerHTML = "";
+
+
+        // 5. Remettre les blocs de l'article dans le formulaire
+        blocs.forEach(function(bloc) {
+
+            if (bloc.type_bloc === "texte") {
+
+                ajouterTexte();
+
+                const textes =
+                    document.querySelectorAll(".bloc-texte");
+
+                textes[textes.length - 1].value =
+                    bloc.contenu;
+            }
+
+
+            else if (bloc.type_bloc === "lien") {
+
+                ajouterLien();
+
+                const liens =
+                    document.querySelectorAll(".bloc-lien");
+
+                liens[liens.length - 1].value =
+                    bloc.contenu;
+            }
+
+
+            else if (bloc.type_bloc === "image") {
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "bloc";
+
+                div.innerHTML = `
+                    <h3>Image actuelle</h3>
+
+                    <img
+                        src="${bloc.contenu}"
+                        style="max-width: 300px;"
+                    >
+
+                    <p>
+                        Pour remplacer cette image,
+                        ajoute une nouvelle image.
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="this.parentElement.remove()"
+                    >
+                        Supprimer
+                    </button>
+
+                    <hr>
+                `;
+
+                container.appendChild(div);
+            }
+
+
+            else if (bloc.type_bloc === "video") {
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "bloc";
+
+                div.innerHTML = `
+                    <h3>Vidéo actuelle</h3>
+
+                    <video
+                        src="${bloc.contenu}"
+                        controls
+                        style="max-width: 400px;"
+                    ></video>
+
+                    <hr>
+                `;
+
+                container.appendChild(div);
+            }
+
+
+            else if (bloc.type_bloc === "audio") {
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "bloc";
+
+                div.innerHTML = `
+                    <h3>Audio actuel</h3>
+
+                    <audio
+                        src="${bloc.contenu}"
+                        controls
+                    ></audio>
+
+                    <hr>
+                `;
+
+                container.appendChild(div);
+            }
+
+        });
+
+
+        // 6. Mémoriser quel article est en modification
+        window.articleEnModification = id;
+
+        const bouton =
+        document.getElementById("bouton-publier");
+
+        if (bouton) {
+        bouton.textContent = "Sauvegarder les modifications";
+        }
+
+
+        // 7. Remonter vers le formulaire
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+
+        alert(
+            "Article chargé. Tu peux maintenant le modifier."
+        );
+
+    }
+
+    catch (erreur) {
+
+        console.error(erreur);
+
+        alert(
+            "Erreur pendant le chargement de l'article."
+        );
+    }
 }
 
 async function supprimerArticle(id) {

@@ -925,6 +925,135 @@ app.get(
 
     }
 );
+/* =====================================================
+   MODIFIER UN ARTICLE
+===================================================== */
+
+app.put(
+    "/contenus/:id",
+    adminSeulement,
+    upload.single("imageAccueil"),
+    (req, res) => {
+
+        const articleId = Number(req.params.id);
+
+        const {
+            titre,
+            description,
+            author,
+            categorie
+        } = req.body;
+
+
+        if (!titre || !author || !categorie) {
+
+            return res.status(400).json({
+                message: "Titre, auteur et catégorie obligatoires."
+            });
+        }
+
+
+        // Si une nouvelle image est envoyée
+        if (req.file) {
+
+            const nouvelleImage =
+                `/uploads/${req.file.filename}`;
+
+            const sql = `
+                UPDATE contenus
+                SET
+                    titre = ?,
+                    description = ?,
+                    author = ?,
+                    categorie = ?,
+                    image_url = ?
+                WHERE id = ?
+            `;
+
+            db.query(
+                sql,
+                [
+                    titre,
+                    description,
+                    author,
+                    categorie,
+                    nouvelleImage,
+                    articleId
+                ],
+                (erreur, resultat) => {
+
+                    if (erreur) {
+
+                        console.error(erreur);
+
+                        return res.status(500).json({
+                            message: "Erreur pendant la modification."
+                        });
+                    }
+
+                    if (resultat.affectedRows === 0) {
+
+                        return res.status(404).json({
+                            message: "Article introuvable."
+                        });
+                    }
+
+                    res.json({
+                        message: "Article modifié avec succès."
+                    });
+                }
+            );
+
+        }
+
+        // Si l'image d'accueil ne change pas
+        else {
+
+            const sql = `
+                UPDATE contenus
+                SET
+                    titre = ?,
+                    description = ?,
+                    author = ?,
+                    categorie = ?
+                WHERE id = ?
+            `;
+
+            db.query(
+                sql,
+                [
+                    titre,
+                    description,
+                    author,
+                    categorie,
+                    articleId
+                ],
+                (erreur, resultat) => {
+
+                    if (erreur) {
+
+                        console.error(erreur);
+
+                        return res.status(500).json({
+                            message: "Erreur pendant la modification."
+                        });
+                    }
+
+                    if (resultat.affectedRows === 0) {
+
+                        return res.status(404).json({
+                            message: "Article introuvable."
+                        });
+                    }
+
+                    res.json({
+                        message: "Article modifié avec succès."
+                    });
+                }
+            );
+        }
+    }
+);
 
 
 /* =====================================================
