@@ -454,9 +454,7 @@ function adminSeulement(req, res, next) {
    DOSSIER UPLOADS
 ===================================================== */
 
-const uploadsPath =
-    path.join(__dirname, "uploads");
-
+const uploadsPath = process.env.UPLOADS_PATH || path.join(__dirname, "uploads");
 
 if (!fs.existsSync(uploadsPath)) {
 
