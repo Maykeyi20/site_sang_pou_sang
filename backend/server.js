@@ -5,6 +5,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const bcrypt = require("bcrypt");
 
 const app = express();
@@ -43,8 +44,22 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.set("trust proxy", 1);
 
+const sessionStore = new MySQLStore({
+    host: process.env.MYSQLHOST || "localhost",
+    port: Number(process.env.MYSQLPORT) || 3306,
+    user: process.env.MYSQLUSER || "root",
+    password: process.env.MYSQLPASSWORD || "",
+    database: process.env.MYSQLDATABASE || "monsite",
+    createDatabaseTable: true
+});
+
+
+
+
 app.use(
     session({
+
+        store: sessionStore,
 
         secret:
             process.env.SESSION_SECRET ||
@@ -72,47 +87,51 @@ app.use(
 
 
 /* =====================================================
-   MYSQL
+   MYSQL - POOL DE CONNEXIONS
 ===================================================== */
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
 
-    host:
-        process.env.MYSQLHOST ||
-        "localhost",
+    host: process.env.MYSQLHOST || "localhost",
 
-    port:
-        process.env.MYSQLPORT ||
-        3306,
+    port: Number(process.env.MYSQLPORT) || 3306,
 
-    user:
-        process.env.MYSQLUSER ||
-        "root",
+    user: process.env.MYSQLUSER || "root",
 
-    password:
-        process.env.MYSQLPASSWORD ||
-        "",
+    password: process.env.MYSQLPASSWORD || "",
 
-    database:
-        process.env.MYSQLDATABASE ||
-        "monsite"
+    database: process.env.MYSQLDATABASE || "monsite",
+
+    waitForConnections: true,
+
+    connectionLimit: 10,
+
+    queueLimit: 0
 
 });
 
 
-db.connect((erreur) => {
+/* =====================================================
+   TESTER LA CONNEXION MYSQL
+===================================================== */
+
+db.getConnection((erreur, connexion) => {
 
     if (erreur) {
+
         console.error(
             "Erreur de connexion à MySQL :",
             erreur
         );
+
         return;
     }
 
     console.log("Connecté à MySQL !");
-});
 
+    connexion.release();
+
+});
 
 /* =====================================================
    CRÉER LE PREMIER ADMIN
