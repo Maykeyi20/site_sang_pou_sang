@@ -37,6 +37,12 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get("/sitemap.xml", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "../Bensky website/sitemap.xml")
+    );
+});
+
 
 /* =====================================================
    SESSION
